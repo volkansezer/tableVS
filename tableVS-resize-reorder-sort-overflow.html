@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8 />
+    <title>vsTable</title>
+
+		<link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css'>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"></script>
+
+		<script type="text/javascript" src="https://suser.pro/stok/assets/js/printThis.js"></script>
+
+
+		<script>
+
+			var nereden = 1;
+			var nereye = 1;
+
+			function tableSirala(nereden,nereye){
+				//console.log(nereden+">"+nereye);
+				jQuery.each($("#tableVS tr"), function(){$(this).children(":eq("+nereden+")").before($(this).children(":eq("+nereye+")")); });
+			}
+
+			function tut(ev){
+				var th = ev.target.closest('th'); // get reference
+				var nodes = Array.from( th.closest('tr').children ); // get array
+				var index = nodes.indexOf( th ); 
+				nereden = index;
+			}
+			function kabul(ev) {
+				ev.preventDefault();
+				//ev.target.style.border="dashed 1px #FF0000";
+				var th = ev.target.closest('th'); // get reference
+				th.style.border="dashed 1px #FF0000";
+				var nodes = Array.from( th.closest('tr').children ); // get array
+				var index = nodes.indexOf( th ); 
+			}
+			function vazgec(ev) {
+				var th = ev.target.closest('th'); // get reference
+				th.style.border="";
+			}
+
+			function birak(ev) {
+				ev.preventDefault();
+				//ev.target.style.border="";
+				var th = ev.target.closest('th');
+				th.style.border="";
+				var nodes = Array.from( th.closest('tr').children ); // get array
+				var index = nodes.indexOf( th ); 
+				nereye = index;
+				tableSirala(nereye,nereden);
+			}
+
+			function siralaVS(n) {
+				var table, tbody, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+				table = document.getElementById("tableVS");
+				tbody = table.getElementsByTagName("tbody")[0];
+				switching = true;
+				dir = "asc"; 
+				while (switching) {
+					switching = false;
+					rows = tbody.rows;
+					for (i = 0; i < (rows.length - 1); i++) {
+						shouldSwitch = false;
+						x = rows[i].getElementsByTagName("TD")[n];
+						y = rows[i + 1].getElementsByTagName("TD")[n];
+						if (dir == "asc") {
+							if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+								shouldSwitch= true;
+								break;
+							}
+						} else if (dir == "desc") {
+							if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+								shouldSwitch = true;
+								break;
+							}
+						}
+					}
+					if (shouldSwitch) {
+						rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+						switching = true;
+						switchcount ++;      
+					} else {
+						if (switchcount == 0 && dir == "asc") {
+							dir = "desc";
+							switching = true;
+						}
+					}
+				}
+			}
+
+		</script>
+
+		
+	<script>
+
+		$(document).ready(function(){
+
+			var table = $('#tableVS');
+
+			//Resize
+			var thHeight = $("#tableVS thead th:first").height(); //console.log(thHeight);
+			$("#tableVS thead tr th, #tableVS thead tr td").resizable({handles: "e",minHeight: thHeight,maxHeight: thHeight,minWidth: 40});
+
+			
+			
+		});
+
+
+	</script>
+	<style>
+
+		p:hover ~ button {
+			border: 1px solid #AA0000;
+		}
+
+		/* SABİT! Renkler için*/
+		#tableVS thead tr td, #tableVS thead tr th{background-color: #D6D6D6 !important; border: 1px solid #AAAAAA !important; vertical-align: bottom !important;}
+		#tableVS td, #tableVS th{border: 1px solid #AAAAAA !important; padding: 2px 1px !important; line-height:20px !important;}
+		#tableVS tbody tr{background-color: #FAFAFA !important;}
+		#tableVS tbody tr:nth-child(even) {background-color: #D6D6D6 !important;}
+		#tableVS tbody tr:hover{background-color: #cde6f7 !important;}
+		#tableVS tfoot, #tableVS tfoot *{background-color: #D6D6D6;}
+
+		#tableVS {table-layout: fixed;  width: 100%; max-width: 150px; } /* */
+		#tableVS td, th {overflow: hidden; white-space: nowrap;}
+
+		/* --------------------------------------------------------- resize, reorder, sort için yeterli */
+
+		#tableVS {
+			display:block;
+			overflow-y: auto;
+			overflow-x: hidden;
+			width: 1600px;
+			height: 400px;
+			max-width: 1500px;
+		}
+
+		#tableVS thead tr th, #tableVS thead tr td {
+			position: sticky;
+			top: -1px;
+		}
+		#tableVS tfoot tr th, #tableVS tfoot tr td{
+			position: sticky;
+			bottom: 0;
+		}
+
+	</style>
+
+  </head>
+  <body>
+  <h2>tableVS</h2>
+  <p>resize, reorder, sort</p>
+  <button onclick="$('#tableVS').printThis({importStyle: true});">PDF YAZDIR</button>
+  
+  <hr>
+	<table id="tableVS">
+		<thead>
+	
+			<tr>
+				<th ondragleave="vazgec(event);" ondragover="kabul(event)" ondrop="birak(event);" style="width:50px;"><span draggable="true" ondragstart="tut(event);" onclick="siralaVS(0);">SIRA NO</span></th>
+				<th ondragleave="vazgec(event);" ondragover="kabul(event)" ondrop="birak(event);" style="width:200px;"><span draggable="true" ondragstart="tut(event);" onclick="siralaVS(1);">ÜRÜN</span></th>
+				<th ondragleave="vazgec(event);" ondragover="kabul(event)" ondrop="birak(event);" style="width:100px;"><span draggable="true" ondragstart="tut(event);" onclick="siralaVS(2);">TARİH</span></th>
+				<th ondragleave="vazgec(event);" ondragover="kabul(event)" ondrop="birak(event);" style="width:100px;"><span draggable="true" ondragstart="tut(event);" onclick="siralaVS(3);">DURUM</span></th>
+				<th ondragleave="vazgec(event);" ondragover="kabul(event)" ondrop="birak(event);" style="width:80px;"><span draggable="true" ondragstart="tut(event);" onclick="siralaVS(4);">FİYAT</span></th>
+			</tr>
+			
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>Alphabet puzzle</td>
+				<td>2016/01/15</td>
+				<td>Done</td>
+				<td>€1.000,00</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>Layout for poster</td>
+				<td>2016/01/31</td>
+				<td>Planned</td>
+				<td>€1.834,00</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>Image creation</td>
+				<td>2016/01/23</td>
+				<td>To Do</td>
+				<td>€1.500,00</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>Create font</td>
+				<td>2016/02/26</td>
+				<td>Done</td>
+				<td>€1.200,00</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>Sticker production</td>
+				<td>2016/02/18</td>
+				<td>Planned</td>
+				<td>€2.100,00</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>Glossy poster</td>
+				<td>2016/03/17</td>
+				<td>To Do</td>
+				<td>€899,00</td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td>Beer label</td>
+				<td>2016/05/28</td>
+				<td>Confirmed</td>
+				<td>€2.499,00</td>
+			</tr>
+			<tr>
+				<td>8</td>
+				<td>Shop sign</td>
+				<td>2016/04/19</td>
+				<td>Offer</td>
+				<td>€1.099,00</td>
+			</tr>
+			<tr>
+				<td>9</td>
+				<td>X-Mas decoration</td>
+				<td>2016/10/31</td>
+				<td>Confirmed</td>
+				<td>€1.750,00</td>
+			</tr>
+			<tr>
+				<td>10</td>
+				<td>Halloween invite</td>
+				<td>2016/09/12</td>
+				<td>Planned</td>
+				<td>€400,00</td>
+			</tr>
+			<tr>
+				<td>11</td>
+				<td>Wedding announcement</td>
+				<td>2016/07/09</td>
+				<td>To Do</td>
+				<td>€299,00</td>
+			</tr>
+			<tr>
+				<td>12</td>
+				<td>Member pasport</td>
+				<td>2016/06/22</td>
+				<td>Offer</td>
+				<td>€149,00</td>
+			</tr>
+			<tr>
+				<td>13</td>
+				<td>Drink tickets</td>
+				<td>2016/11/01</td>
+				<td>Confirmed</td>
+				<td>€199,00</td>
+			</tr>
+			<tr>
+				<td>14</td>
+				<td>Album cover</td>
+				<td>2017/03/15</td>
+				<td>To Do</td>
+				<td>€4.999,00</td>
+			</tr>
+			<tr>
+				<td>15</td>
+				<td>Shipment box</td>
+				<td>2017/02/08</td>
+				<td>Offer</td>
+				<td>€1.399,00</td>
+			</tr>
+			
+			<tr>
+				<td>16</td>
+				<td>Wooden puzzle</td>
+				<td>2017/01/11</td>
+				<td>Done</td>
+				<td>€1.000,00</td>
+			</tr>
+			<tr>
+				<td>17</td>
+				<td>Fashion Layout</td>
+				<td>2016/01/30</td>
+				<td>Planned</td>
+				<td>€1.834,00</td>
+			</tr>
+			<tr>
+				<td>18</td>
+				<td>Toy creation</td>
+				<td>2016/01/10</td>
+				<td>To Do</td>
+				<td>€1.550,00</td>
+			</tr>
+			<tr>
+				<td>19</td>
+				<td>Create stamps</td>
+				<td>2016/02/26</td>
+				<td>Done</td>
+				<td>€1.220,00</td>
+			</tr>
+			<tr>
+				<td>20</td>
+				<td>Sticker design</td>
+				<td>2017/02/18</td>
+				<td>Planned</td>
+				<td>€2.100,00</td>
+			</tr>
+			<tr>
+				<td>21</td>
+				<td>Poster rock concert</td>
+				<td>2017/04/17</td>
+				<td>To Do</td>
+				<td>€899,00</td>
+			</tr>
+			<tr>
+				<td>22</td>
+				<td>Wine label</td>
+				<td>2017/05/28</td>
+				<td>Confirmed</td>
+				<td>€2.799,00</td>
+			</tr>
+			<tr>
+				<td>23</td>
+				<td>Shopping bag</td>
+				<td>2017/04/19</td>
+				<td>Offer</td>
+				<td>€1.299,00</td>
+			</tr>
+			<tr>
+				<td>24</td>
+				<td>Decoration for Easter</td>
+				<td>2017/10/31</td>
+				<td>Confirmed</td>
+				<td>€1.650,00</td>
+			</tr>
+			<tr>
+				<td>25</td>
+				<td>Saint Nicolas colorbook</td>
+				<td>2017/09/12</td>
+				<td>Planned</td>
+				<td>€510,00</td>
+			</tr>
+			<tr>
+				<td>26</td>
+				<td>Wedding invites</td>
+				<td>2017/07/09</td>
+				<td>To Do</td>
+				<td>€399,00</td>
+			</tr>
+			<tr>
+				<td>27</td>
+				<td>Member pasport</td>
+				<td>2017/06/22</td>
+				<td>Offer</td>
+				<td>€249,00</td>
+			</tr>
+			<tr>
+				<td>28</td>
+				<td>Drink tickets</td>
+				<td>2017/11/01</td>
+				<td>Confirmed</td>
+				<td>€199,00</td>
+			</tr>
+			<tr>
+				<td>29</td>
+				<td>Blue-Ray cover</td>
+				<td>2018/03/15</td>
+				<td>To Do</td>
+				<td>€1.999,00</td>
+			</tr>
+			<tr>
+				<td>30</td>
+				<td>TV carton</td>
+				<td>2019/02/08</td>
+				<td>Offer</td>
+				<td>€1.369,00</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<th>Order</th>
+				<th>Description</th>
+				<th>Deadline</th>
+				<th>Status</th>
+				<th>Amount</th>
+			</tr>
+		</tfoot>
+	</table>
+
+  </body>
+</html>

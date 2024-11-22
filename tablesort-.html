@@ -1,0 +1,87 @@
+<html>
+<head>
+
+<title>Demo Of Sort Table Using jQuery On TalkersCode.com</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>	
+
+<script>
+
+
+function sort_age() 
+{
+	var table=$('#mytable');
+	var tbody = $('#table1');
+
+    tbody.find('tr').sort(function(a, b) 
+	{
+        if($('#age_order').val()=='asc') 
+		{
+            return $('td:last', a).text().localeCompare($('td:last', b).text());
+        }
+		else 
+		{
+            return $('td:last', b).text().localeCompare($('td:last', a).text());
+        }
+		
+    }).appendTo(tbody);
+	
+	var sort_order=$('#age_order').val();
+	if(sort_order=="asc")
+	{
+		document.getElementById("age_order").value="desc";
+	}
+	if(sort_order=="desc")
+	{
+		document.getElementById("age_order").value="asc";
+	}
+}
+</script>
+<input type="hidden" id="age_order" value="asc">
+
+
+
+<button onclick="sort_age();">SIRALA</button>
+
+</head>
+<body>
+
+
+<br>
+<br>
+
+
+<center>
+<div id="linkad_middle">
+<table id="mytable" cellpadding="7" align="center">
+<tr>
+<th >SORT NAME</th>
+<th>SORT AGE</th>
+</tr>
+<tbody id="table1">
+<tr>
+<td>Aman</td><td>28</td>
+</tr>
+<tr>
+<td>Rahul</td><td>36</td>
+</tr>
+<tr>
+<td>Amit</td><td>21</td>
+</tr>
+<tr>
+<td>Suresh</td><td>34</td>
+</tr>
+<tr>
+<td>Karan</td><td>14</td>
+</tr>
+<tr>
+<td>Pooja</td><td>24</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</body>
+</html>

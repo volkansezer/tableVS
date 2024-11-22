@@ -1,0 +1,12 @@
+# Ignore the build directory
+/dist
+/.vscode
+/.DS_Store
+/volumes
+.htaccess
+*.yaml
+*.yml
+
+*.mp3
+*.wav
+test.*

@@ -1,0 +1,53 @@
+<html>
+	<head>
+
+		<title>Sort Table</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>	
+
+		<script>
+
+			var sortby = "asc";
+			function sirala(n=1){
+
+				var table = $('#tableVS');
+				var tbody = table.find('tbody');
+				tbody.find('tr').sort(function(a, b){
+					if(sortby=='asc'){
+						return $('td:eq('+n+')', a).text().localeCompare($('td:eq('+n+')', b).text());
+					}else{
+						return $('td:eq('+n+')', b).text().localeCompare($('td:eq('+n+')', a).text());
+					}
+				}).appendTo(tbody);
+
+				if(sortby=='asc'){sortby="desc";console.log("desc");}else{sortby="asc";console.log("asc");}
+
+			}
+		</script>
+	</head>
+	<body>
+
+		<button onclick="sirala(0);">SIRALA 0</button> <button onclick="sirala(1);">SIRALA 1</button>
+
+		<table id="tableVS" cellpadding="7" align="center">
+			<thead>
+				<tr>
+					<th>SORT NAME</th>
+					<th>SORT AGE</th>
+				</tr>
+			</thead>
+			<tbody id="table1">
+				<tr><td>Aman</td><td>28</td></tr>
+				<tr><td>Rahul</td><td>36</td></tr>
+				<tr><td>Amit</td><td>21</td></tr>
+				<tr><td>Suresh</td><td>34</td></tr>
+				<tr><td>Karan</td><td>14</td></tr>
+				<tr><td>Pooja</td><td>24</td></tr>
+			</tbody>
+		</table>
+
+
+	</body>
+</html>

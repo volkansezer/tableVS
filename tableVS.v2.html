@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8 />
+    <title>vsTable</title>
+
+		<link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css'>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"></script>
+
+		<script type="text/javascript" src="https://suser.pro/stok/assets/js/printThis.js"></script>
+
+		<script type="text/javascript" src="tableVS.js"></script>
+
+		<link rel="stylesheet" href="tableVS.css">
+<script>
+	
+
+</script>		
+	<script>
+
+		$(document).ready(function(){
+
+			var table = $('#tableVS');
+			var params = [0,1]; //footer'da sayım yapılacak sütun numaraları
+			var sayac = 0;
+
+			var $table = $('<table id="tableGG"><tr></tr></table>');
+			$('#divGGtable').append($table);
+
+			//Sort harici fonksiyon ile
+			$('#tableVS thead tr th').each(function(){
+				$(this).attr("data-column","GG"+($(this).index()+1));
+				if(sayac==5){ sayac=0; var $tr = $('<tr></tr>'); $('#tableGG').append($tr);}
+				var $element	= $('<td><label><input type="checkbox" class="tableVSgg" data-column="GG'+($(this).index()+1)+'"> '+$(this).text()+'</label></td>');
+				$('#tableGG tr:last').append($element);
+				$(this).html('<span draggable="true" ondragstart="tut(event);">'+$(this).html()+'</span><br><input type="search" id="filter'+$(this).index()+'" class="tableFilter">'); // onclick="siralaVS(\'tableVS\','+tdindex+');"
+				sayac++;
+			});
+
+			//Sort event
+			$("#tableVS thead tr th").click(function(){	siralaVS('tableVS',$(this).index()); });
+
+			//Resize
+			var thHeight = $("#tableVS thead th:first").height(); //console.log(thHeight);
+			$("#tableVS thead tr th, #tableVS thead tr td").resizable({handles: "e",minHeight: thHeight,maxHeight: thHeight,minWidth: 40});
+
+			//Filter
+			$('input.tableFilter').on('change keyup search', function(e){
+				e.preventDefault();
+				var inputs = new Array();
+				$('#tableVS thead tr th').each(function(){ inputs.push($(this).children("input").val().toUpperCase()); });
+				$('#tableVS tbody tr').each(function(){
+					var kontrol = true;		
+					for(i=0; i<$(this).children('td').length; i++){	if($(this).children("td:eq("+i+")").text().toUpperCase().indexOf(inputs[i])  > -1){}else{kontrol=false;} }
+					if(kontrol){$(this).css("display","");$(this).css("visibility", "");}else{$(this).css("display","none");$(this).css("visibility", "hidden");}
+				});
+				hesapla("tableVS",params);
+			});
+
+			//Reorder
+			$("#tableVS thead tr th").on("dragover", kabul).on("dragleave", vazgec).on("drop", birak); ////.on("dragenter", onDragEnter)
+			
+			//sütunları göster/gizle
+			$('input.tableVSgg').on('change', function(e){
+				e.preventDefault();				
+				var col = $('th[data-column="'+$(this).attr('data-column')+'"]').index();
+				var nesne = $('#tableVS td:nth-child('+(col+1)+'), #tableVS th:nth-child('+(col+1)+')');
+				if($(this).is(':checked')){nesne.css("display", "");}else{nesne.css("display", "none");} //.hide(); .show();
+			});
+
+			hesapla("tableVS",params);
+		});
+
+	</script>
+
+  </head>
+  <body>
+  <h2>tableVS</h2>
+  <p>resize, reorder, sort, overflow, sum(?), filter, print, excel</p>
+  <button onclick="$('#tableVS').printThis({importStyle: true});">PDF YAZDIR</button>
+  <button onclick="tabelToExcel('#tableVS');">EXCEL İNDİR</button>
+<div id="divGGtable"></div>
+  <hr>
+		<div style="border:1px dashed #FF0000; height:450px;">
+			<table id="tableVS">
+				<thead>
+					<tr>
+						<th style="width:50px;">SIRA NO</th>
+						<th style="width:50px;">ADET</th>
+						<th style="width:200px;">ÜRÜN</th>
+						<th style="width:100px;">TARİH</th>
+						<th style="width:100px;">DURUM</th>
+						<th style="width:80px;">FİYAT</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1</td>
+						<td>134</td>
+						<td>Alphabet puzzle</td>
+						<td>2016/01/15</td>
+						<td>Done</td>
+						<td>€1.000,00</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>134</td>
+						<td>Layout for poster</td>
+						<td>2016/01/31</td>
+						<td>Planned</td>
+						<td>€1.834,00</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>134</td>
+						<td>Image creation</td>
+						<td>2016/01/23</td>
+						<td>To Do</td>
+						<td>€1.500,00</td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>134</td>
+						<td>Create font</td>
+						<td>2016/02/26</td>
+						<td>Done</td>
+						<td>€1.200,00</td>
+					</tr>
+					<tr>
+						<td>5</td>
+						<td>134</td>
+						<td>Sticker production</td>
+						<td>2016/02/18</td>
+						<td>Planned</td>
+						<td>€2.100,00</td>
+					</tr>
+					<tr>
+						<td>6</td>
+						<td>134</td>
+						<td>Glossy poster</td>
+						<td>2016/03/17</td>
+						<td>To Do</td>
+						<td>€899,00</td>
+					</tr>
+					<tr>
+						<td>7</td>
+						<td>134</td>
+						<td>Beer label</td>
+						<td>2016/05/28</td>
+						<td>Confirmed</td>
+						<td>€2.499,00</td>
+					</tr>
+					<tr>
+						<td>8</td>
+						<td>134</td>
+						<td>Shop sign</td>
+						<td>2016/04/19</td>
+						<td>Offer</td>
+						<td>€1.099,00</td>
+					</tr>
+					<tr>
+						<td>9</td>
+						<td>134</td>
+						<td>X-Mas decoration</td>
+						<td>2016/10/31</td>
+						<td>Confirmed</td>
+						<td>€1.750,00</td>
+					</tr>
+					<tr>
+						<td>10</td>
+						<td>134</td>
+						<td>Halloween invite</td>
+						<td>2016/09/12</td>
+						<td>Planned</td>
+						<td>€400,00</td>
+					</tr>
+					<tr>
+						<td>11</td>
+						<td>134</td>
+						<td>Wedding announcement</td>
+						<td>2016/07/09</td>
+						<td>To Do</td>
+						<td>€299,00</td>
+					</tr>
+					<tr>
+						<td>12</td>
+						<td>134</td>
+						<td>Member pasport</td>
+						<td>2016/06/22</td>
+						<td>Offer</td>
+						<td>€149,00</td>
+					</tr>
+					<tr>
+						<td>13</td>
+						<td>134</td>
+						<td>Drink tickets</td>
+						<td>2016/11/01</td>
+						<td>Confirmed</td>
+						<td>€199,00</td>
+					</tr>
+					<tr>
+						<td>14</td>
+						<td>134</td>
+						<td>Album cover</td>
+						<td>2017/03/15</td>
+						<td>To Do</td>
+						<td>€4.999,00</td>
+					</tr>
+					<tr>
+						<td>15</td>
+						<td>134</td>
+						<td>Shipment box</td>
+						<td>2017/02/08</td>
+						<td>Offer</td>
+						<td>€1.399,00</td>
+					</tr>
+					
+					<tr>
+						<td>16</td>
+						<td>134</td>
+						<td>Wooden puzzle</td>
+						<td>2017/01/11</td>
+						<td>Done</td>
+						<td>€1.000,00</td>
+					</tr>
+					<tr>
+						<td>17</td>
+						<td>134</td>
+						<td>Fashion Layout</td>
+						<td>2016/01/30</td>
+						<td>Planned</td>
+						<td>€1.834,00</td>
+					</tr>
+					<tr>
+						<td>18</td>
+						<td>134</td>
+						<td>Toy creation</td>
+						<td>2016/01/10</td>
+						<td>To Do</td>
+						<td>€1.550,00</td>
+					</tr>
+					<tr>
+						<td>19</td>
+						<td>134</td>
+						<td>Create stamps</td>
+						<td>2016/02/26</td>
+						<td>Done</td>
+						<td>€1.220,00</td>
+					</tr>
+					<tr>
+						<td>20</td>
+						<td>134</td>
+						<td>Sticker design</td>
+						<td>2017/02/18</td>
+						<td>Planned</td>
+						<td>€2.100,00</td>
+					</tr>
+					<tr>
+						<td>21</td>
+						<td>134</td>
+						<td>Poster rock concert</td>
+						<td>2017/04/17</td>
+						<td>To Do</td>
+						<td>€899,00</td>
+					</tr>
+					<tr>
+						<td>22</td>
+						<td>22</td>
+						<td>Wine label</td>
+						<td>2017/05/28</td>
+						<td>Confirmed</td>
+						<td>€2.799,00</td>
+					</tr>
+					<tr>
+						<td>23</td>
+						<td>134</td>
+						<td>Shopping bag</td>
+						<td>2017/04/19</td>
+						<td>Offer</td>
+						<td>€1.299,00</td>
+					</tr>
+					<tr>
+						<td>24</td>
+						<td>134</td>
+						<td>Decoration for Easter</td>
+						<td>2017/10/31</td>
+						<td>Confirmed</td>
+						<td>€1.650,00</td>
+					</tr>
+					<tr>
+						<td>25</td>
+						<td>134</td>
+						<td>Saint Nicolas colorbook</td>
+						<td>2017/09/12</td>
+						<td>Planned</td>
+						<td>€510,00</td>
+					</tr>
+					<tr>
+						<td>26</td>
+						<td>134</td>
+						<td>Wedding invites</td>
+						<td>2017/07/09</td>
+						<td>To Do</td>
+						<td>€399,00</td>
+					</tr>
+					<tr>
+						<td>27</td>
+						<td>134</td>
+						<td>Member pasport</td>
+						<td>2017/06/22</td>
+						<td>Offer</td>
+						<td>€249,00</td>
+					</tr>
+					<tr>
+						<td>28</td>
+						<td>134</td>
+						<td>Drink tickets</td>
+						<td>2017/11/01</td>
+						<td>Confirmed</td>
+						<td>€199,00</td>
+					</tr>
+					<tr>
+						<td>29</td>
+						<td>134</td>
+						<td>Blue-Ray cover</td>
+						<td>2018/03/15</td>
+						<td>To Do</td>
+						<td>€1.999,00</td>
+					</tr>
+					<tr>
+						<td>30</td>
+						<td>134</td>
+						<td>TV carton</td>
+						<td>2019/02/08</td>
+						<td>Offer</td>
+						<td>€1.369,00</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</body>
+</html>

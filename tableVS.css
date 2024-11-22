@@ -1,0 +1,30 @@
+p:hover ~ button {border: 1px solid #AA0000;}
+
+/* SABİT! Renkler için*/
+#tableVS thead tr td, #tableVS thead tr th{background-color: #D6D6D6 !important; border: 1px solid #AAAAAA !important; vertical-align: bottom !important;}
+#tableVS td, #tableVS th{border: 1px solid #AAAAAA !important; padding: 2px 1px !important; line-height:20px !important;}
+#tableVS tbody tr{background-color: #FAFAFA !important;}
+#tableVS tbody tr:nth-child(even) {background-color: #D6D6D6 !important;}
+#tableVS tbody tr:hover{background-color: #cde6f7 !important;}
+#tableVS tfoot, #tableVS tfoot *{background-color: #D6D6D6;}
+
+#tableVS {table-layout: fixed;  width: 100%; max-width: 150px; } /* */
+#tableVS td, th {overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* --------------------------------------------------------- resize, reorder, sort için yeterli */
+#tableVS {display:block; overflow-y: auto; overflow-x: hidden; width: 1600px; height: 400px; max-width: 1500px;}
+#tableVS thead tr th, #tableVS thead tr td {position: sticky; top: -1px;}
+#tableVS tfoot tr th, #tableVS tfoot tr td{position: sticky; bottom: 0;}
+
+/* filter iÃ§in
+#myTable thead tr td, #myTable thead tr th{
+	overflow: hidden !important;
+	table-layout: fixed;
+} */
+.tableFilter{
+	width:100% !important;
+	border:1px solid #AAA;
+	background-color: #F0F0F0;
+	outline: none;
+	padding:1px; margin:0;
+}
